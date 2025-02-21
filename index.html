@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Product Catalog</title>
-  <!-- Import Noto Sans -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-  <!-- SheetJS library to parse XLSX files -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
-      font-family: 'Noto Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 20px;
       background-color: #f8f8f8;
@@ -18,13 +16,11 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    /* Grid container for all products */
     #product-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
     }
-    /* Each product card */
     .product-card {
       background-color: #fff;
       border: 1px solid #ddd;
@@ -32,14 +28,12 @@
       overflow: hidden;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    /* Image container maintains 1:1 ratio */
     .image-container {
       position: relative;
       width: 100%;
       padding-top: 100%;
       background-color: white;
     }
-    /* Product image: centered, preserving its original aspect ratio */
     .image-container img.product-image {
       position: absolute;
       top: 0;
@@ -49,17 +43,20 @@
       object-fit: contain;
       z-index: 1;
     }
-    /* Brand logo overlay – larger and on top of the product image */
-    .brand-logo {
+    .brand-label {
       position: absolute;
-      top: 5px;
-      left: 5px;
-      width: 80px; /* Increased size */
-      height: auto;
+      top: 10px;
+      left: 10px;
       z-index: 2;
-      opacity: 0.9;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background-color: #333;
     }
-    /* Product details below the image */
     .product-details {
       padding: 10px;
     }
@@ -78,7 +75,6 @@
       font-size: 14px;
       color: #777;
     }
-    /* Price and badge container */
     .price-badge-container {
       display: flex;
       justify-content: center;
@@ -86,7 +82,6 @@
       gap: 15px;
       margin-top: 10px;
     }
-    /* Member price badge styling */
     .member-price {
       background-color: #ffe082;
       border-radius: 8px;
@@ -102,7 +97,6 @@
       font-size: 22px;
       font-weight: bold;
     }
-    /* S-Coin badge styling */
     .scoin-badge {
       display: flex;
       border-radius: 8px;
@@ -110,7 +104,6 @@
       height: 50px;
       box-shadow: 0 0 2px rgba(0,0,0,0.2);
     }
-    /* Left part of S-Coin badge */
     .scoin-badge .badge-left {
       background-color: red;
       width: 30px;
@@ -125,7 +118,6 @@
       font-weight: bold;
       white-space: nowrap;
     }
-    /* Right part of S-Coin badge */
     .scoin-badge .badge-right {
       background-color: white;
       display: flex;
@@ -148,63 +140,73 @@
 <body>
   <h1>Product Catalog</h1>
   <div id="product-container"></div>
-  
+
   <script>
-    // Function to render the products into the catalog
+    const brandColors = {
+      'electrolux': '#2D2D2D',
+      'haier': '#E2231A',
+      'lg': '#C7000B',
+      'philips': '#0084D1',
+      'panasonic': '#0040BE',
+      'robam': '#017BC8',
+      'samsung': '#1428A0',
+      'sharp': '#EB0028',
+      'sony': '#000000',
+      'tcl': '#E10A1C',
+      'tefal': '#ED1C24',
+      'toshiba': '#FF0000'
+    };
+
     function renderProducts(products) {
       const container = document.getElementById('product-container');
       products.forEach(product => {
-        // Create product card
         const card = document.createElement('div');
         card.className = 'product-card';
 
-        // --- Image Container ---
+        // Image Container
         const imageContainer = document.createElement('div');
         imageContainer.className = 'image-container';
         
-        // Product image (maintains 1:1 ratio, object-fit: contain)
         const productImage = document.createElement('img');
         productImage.className = 'product-image';
         productImage.src = product.URL;
         productImage.alt = product.DESC;
         imageContainer.appendChild(productImage);
         
-        // Brand logo overlay (assumes logo file name is the lowercase of the BRAND)
-        const brandLogo = document.createElement('img');
-        brandLogo.className = 'brand-logo';
-        brandLogo.src = product.BRAND.toLowerCase() + '.png';
-        brandLogo.alt = product.BRAND + ' logo';
-        imageContainer.appendChild(brandLogo);
+        // Brand Label
+        const brandLabel = document.createElement('div');
+        brandLabel.className = 'brand-label';
+        brandLabel.textContent = product.BRAND;
+        const brandKey = product.BRAND.toLowerCase();
+        brandLabel.style.backgroundColor = brandColors[brandKey] || '#333';
+        imageContainer.appendChild(brandLabel);
         
         card.appendChild(imageContainer);
         
-        // --- Product Details ---
+        // Product Details
         const details = document.createElement('div');
         details.className = 'product-details';
         
-        // Product title from DESC
         const title = document.createElement('h3');
         title.className = 'product-title';
         title.textContent = product.DESC;
         details.appendChild(title);
         
-        // Model code from MODEL
         const model = document.createElement('p');
         model.className = 'product-model';
         model.textContent = product.MODEL;
         details.appendChild(model);
         
-        // Original price from RCP
         const origPrice = document.createElement('p');
         origPrice.className = 'original-price';
         origPrice.textContent = 'RCP: RM' + product.RCP;
         details.appendChild(origPrice);
         
-        // --- Price and S-Coin Badge Row ---
+        // Price Badges
         const priceBadgeContainer = document.createElement('div');
         priceBadgeContainer.className = 'price-badge-container';
         
-        // Member price badge (BLK)
+        // Member Price
         const memberPrice = document.createElement('div');
         memberPrice.className = 'member-price';
         const priceLabel = document.createElement('span');
@@ -217,11 +219,10 @@
         memberPrice.appendChild(priceValue);
         priceBadgeContainer.appendChild(memberPrice);
         
-        // S-Coin badge
+        // S-Coin Badge
         const scoinBadge = document.createElement('div');
         scoinBadge.className = 'scoin-badge';
         
-        // Badge left part: rotated "EARN"
         const badgeLeft = document.createElement('div');
         badgeLeft.className = 'badge-left';
         const badgeLeftSpan = document.createElement('span');
@@ -229,12 +230,10 @@
         badgeLeft.appendChild(badgeLeftSpan);
         scoinBadge.appendChild(badgeLeft);
         
-        // Badge right part: SCOIN value and label
         const badgeRight = document.createElement('div');
         badgeRight.className = 'badge-right';
         const scoinValueDiv = document.createElement('div');
         scoinValueDiv.className = 'scoin-value';
-        // Convert SCOIN value to percentage if necessary
         let scoinVal = product.SCOIN;
         if (typeof scoinVal === "number" && scoinVal < 1) {
           scoinVal = (scoinVal * 100).toFixed(0) + "%";
@@ -250,7 +249,6 @@
         badgeRight.appendChild(scoinLabelDiv);
         
         scoinBadge.appendChild(badgeRight);
-        
         priceBadgeContainer.appendChild(scoinBadge);
         details.appendChild(priceBadgeContainer);
         
@@ -258,8 +256,7 @@
         container.appendChild(card);
       });
     }
-    
-    // Load the XLSX file and render products
+
     fetch('pahang.xlsx')
       .then(response => response.arrayBuffer())
       .then(data => {
