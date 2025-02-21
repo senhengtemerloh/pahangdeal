@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Catalog</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -10,31 +11,76 @@
       font-family: 'Noto Sans', sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: #e8f5e9;
+      background-color: #f8f8f8;
     }
+
     h1 {
       text-align: center;
       margin-bottom: 20px;
-      color: #2e7d32;
     }
+
+    /* Mobile-specific controls */
+    .mobile-controls {
+      display: none;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 10px;
+      z-index: 100;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .sort-controls {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    /* Navigation buttons */
+    .nav-buttons {
+      display: none;
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 100;
+    }
+
+    .nav-button {
+      display: block;
+      width: 40px;
+      height: 40px;
+      margin: 5px 0;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    /* Product grid */
     #product-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
     }
+
     .product-card {
-      background-color: #f1f8e9;
-      border: 1px solid #c8e6c9;
+      background-color: #fff;
+      border: 1px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+
     .image-container {
       position: relative;
       width: 100%;
       padding-top: 100%;
       background-color: white;
     }
+
     .image-container img.product-image {
       position: absolute;
       top: 0;
@@ -44,50 +90,39 @@
       object-fit: contain;
       z-index: 1;
     }
-    .brand-badge {
+
+    .brand-logo {
       position: absolute;
       top: 5px;
       left: 5px;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-weight: bold;
+      width: 80px;
+      height: auto;
       z-index: 2;
-      font-size: 14px;
-      text-transform: uppercase;
+      opacity: 0.9;
     }
-    /* Brand-specific styles */
-    .brand-electrolux { background-color: #002d6b; color: white; }
-    .brand-haier { background-color: #e2231a; color: white; }
-    .brand-lg { background-color: #A50034; color: white; }
-    .brand-philips { background-color: #0A5E8C; color: white; }
-    .brand-panasonic { background-color: #0F58A8; color: white; }
-    .brand-robam { background-color: #000; color: #FFD700; }
-    .brand-samsung { background-color: #1428A0; color: white; }
-    .brand-sharp { background-color: #FF0000; color: white; }
-    .brand-sony { background-color: #000; color: white; }
-    .brand-tcl { background-color: #E11B22; color: white; }
-    .brand-tefal { background-color: #ED1C24; color: white; }
-    .brand-toshiba { background-color: #FF0000; color: white; }
-    
+
     .product-details {
       padding: 10px;
     }
+
     .product-title {
       margin: 5px 0;
       font-size: 16px;
       font-weight: bold;
-      color: #1b5e20;
     }
+
     .product-model {
       margin: 3px 0;
       font-size: 14px;
-      color: #4CAF50;
+      color: #555;
     }
+
     .original-price {
       margin: 3px 0;
       font-size: 14px;
-      color: #81C784;
+      color: #777;
     }
+
     .price-badge-container {
       display: flex;
       justify-content: center;
@@ -95,23 +130,25 @@
       gap: 15px;
       margin-top: 10px;
     }
+
     .member-price {
-      background-color: #c8e6c9;
+      background-color: #ffe082;
       border-radius: 8px;
       padding: 10px 15px;
       display: flex;
       align-items: baseline;
     }
+
     .member-price .price-label {
-      font-size: 13px;
+      font-size: 14px;
       margin-right: 8px;
-      color: #2e7d32;
     }
+
     .member-price .price-value {
-      font-size: 25px;
+      font-size: 22px;
       font-weight: bold;
-      color: #1b5e20;
     }
+
     .scoin-badge {
       display: flex;
       border-radius: 8px;
@@ -119,6 +156,7 @@
       height: 50px;
       box-shadow: 0 0 2px rgba(0,0,0,0.2);
     }
+
     .scoin-badge .badge-left {
       background-color: red;
       width: 30px;
@@ -126,6 +164,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .scoin-badge .badge-left span {
       transform: rotate(-90deg);
       color: white;
@@ -133,6 +172,7 @@
       font-weight: bold;
       white-space: nowrap;
     }
+
     .scoin-badge .badge-right {
       background-color: white;
       display: flex;
@@ -141,28 +181,137 @@
       justify-content: center;
       padding: 0 8px;
     }
+
     .scoin-badge .badge-right .scoin-value {
-      font-size: 25px;
+      font-size: 16px;
       color: red;
       font-weight: bold;
     }
+
     .scoin-badge .badge-right .scoin-label {
       font-size: 12px;
       color: black;
     }
+
+    /* Mobile-specific styles */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .mobile-controls {
+        display: block;
+        margin-bottom: 15px;
+      }
+
+      .nav-buttons {
+        display: block;
+      }
+
+      #product-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .product-card {
+        font-size: 14px;
+      }
+
+      .brand-logo {
+        width: 50px;
+      }
+
+      .product-title {
+        font-size: 14px;
+      }
+
+      .product-model {
+        font-size: 12px;
+      }
+
+      .original-price {
+        font-size: 12px;
+      }
+
+      .member-price {
+        padding: 6px 10px;
+      }
+
+      .member-price .price-label {
+        font-size: 12px;
+      }
+
+      .member-price .price-value {
+        font-size: 16px;
+      }
+
+      .scoin-badge {
+        height: 40px;
+      }
+
+      .scoin-badge .badge-left {
+        width: 24px;
+      }
+
+      .scoin-badge .badge-left span {
+        font-size: 10px;
+      }
+
+      .scoin-badge .badge-right .scoin-value {
+        font-size: 14px;
+      }
+
+      .scoin-badge .badge-right .scoin-label {
+        font-size: 10px;
+      }
+
+      .price-badge-container {
+        gap: 8px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="mobile-controls">
+    <select class="sort-controls" onchange="sortProducts(this.value)">
+      <option value="">Sort by Price</option>
+      <option value="low-to-high">Price: Low to High</option>
+      <option value="high-to-low">Price: High to Low</option>
+    </select>
+  </div>
+
   <h1>Product Catalog</h1>
   <div id="product-container"></div>
-  
+
+  <div class="nav-buttons">
+    <button class="nav-button" onclick="scrollToTop()">↑</button>
+    <button class="nav-button" onclick="scrollToBottom()">↓</button>
+  </div>
+
   <script>
-    function formatPrice(price) {
-      return Number(price).toLocaleString('en-MY', { 
-        style: 'currency', 
-        currency: 'MYR', 
-        maximumFractionDigits: 0 
-      });
+    let allProducts = [];
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToBottom() {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function sortProducts(method) {
+      const container = document.getElementById('product-container');
+      container.innerHTML = '';
+
+      const sortedProducts = [...allProducts];
+      
+      if (method === 'low-to-high') {
+        sortedProducts.sort((a, b) => parseFloat(a.BLK) - parseFloat(b.BLK));
+      } else if (method === 'high-to-low') {
+        sortedProducts.sort((a, b) => parseFloat(b.BLK) - parseFloat(a.BLK));
+      }
+
+      renderProducts(sortedProducts);
     }
 
     function renderProducts(products) {
@@ -180,10 +329,11 @@
         productImage.alt = product.DESC;
         imageContainer.appendChild(productImage);
         
-        const brandBadge = document.createElement('div');
-        brandBadge.className = `brand-badge brand-${product.BRAND.toLowerCase()}`;
-        brandBadge.textContent = product.BRAND;
-        imageContainer.appendChild(brandBadge);
+        const brandLogo = document.createElement('img');
+        brandLogo.className = 'brand-logo';
+        brandLogo.src = product.BRAND.toLowerCase() + '.png';
+        brandLogo.alt = product.BRAND + ' logo';
+        imageContainer.appendChild(brandLogo);
         
         card.appendChild(imageContainer);
         
@@ -202,7 +352,7 @@
         
         const origPrice = document.createElement('p');
         origPrice.className = 'original-price';
-        origPrice.textContent = `RCP: ${formatPrice(product.RCP)}`;
+        origPrice.textContent = 'RCP: RM' + product.RCP;
         details.appendChild(origPrice);
         
         const priceBadgeContainer = document.createElement('div');
@@ -216,7 +366,7 @@
         memberPrice.appendChild(priceLabel);
         const priceValue = document.createElement('span');
         priceValue.className = 'price-value';
-        priceValue.textContent = formatPrice(product.BLK);
+        priceValue.textContent = 'RM' + product.BLK;
         memberPrice.appendChild(priceValue);
         priceBadgeContainer.appendChild(memberPrice);
         
@@ -249,6 +399,7 @@
         badgeRight.appendChild(scoinLabelDiv);
         
         scoinBadge.appendChild(badgeRight);
+        
         priceBadgeContainer.appendChild(scoinBadge);
         details.appendChild(priceBadgeContainer);
         
@@ -256,15 +407,15 @@
         container.appendChild(card);
       });
     }
-
+    
     fetch('pahang.xlsx')
       .then(response => response.arrayBuffer())
       .then(data => {
         const workbook = XLSX.read(data, { type: 'array' });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
-        const products = XLSX.utils.sheet_to_json(worksheet);
-        renderProducts(products);
+        allProducts = XLSX.utils.sheet_to_json(worksheet);
+        renderProducts(allProducts);
       })
       .catch(error => {
         console.error('Error loading XLSX file:', error);
